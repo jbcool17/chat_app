@@ -1,4 +1,7 @@
-  <div id="msgs"></div>
+<div id="content"></div>
+<hr>
+
+  <!-- <div id="msgs"></div> -->
   <h3>Hello <strong><%= @user %></strong>! Welcome to Websockets.</h3>
   <%= @current_ws_users %>
   <div id="dump"></div>
@@ -13,11 +16,8 @@
   </form>
 
   <a href='/'>Go Back to Home</a>
-  <div id="content"></div>
-
-  <script src="/js/chatViewComponent.js" type="text/babel"></script>
 <script>
-
+var userName = '<%= @user %>';
 $(document).ready(function(){
 
   var re = /https|http/,
@@ -125,4 +125,93 @@ $(document).ready(function(){
   }, 60000)
 
 });
+</script>
+
+<!-- ------------------------------------------ -->
+<!-- REACT COMPONENTS -->
+<!-- ------------------------------------------ -->
+<script type="text/babel">
+  var ChatLine = React.createClass({
+    render: function() {
+      var lineStyle = {
+        backgroundColor: this.props.color
+      };
+      return (
+        <li className="line" style={lineStyle}>
+          {this.props.date} | {this.props.user} : {this.props.message}
+        </li>
+      )
+    }
+  })
+  var ChatView = React.createClass({
+        render: function() {
+          var chatNodes = this.props.data.map(function(row){
+            var date = new Date(row.date).toString().split('GMT');
+            return (
+              <ChatLine date={date[0]} user={row.user} message={row.message} color={row.color} key={row.id}/>
+            )
+          })
+          return (
+            <ul className="chatView chat-window list-group" id="msgs">
+              {chatNodes}
+            </ul>
+          );
+        }
+      });
+
+  var ChatForm = React.createClass({
+    getInitialState: function() {
+      return {message: ''};
+    },
+    handleMessageChange: function(e) {
+      this.setState({message: e.target.value});
+    },
+    handleSubmit: function(e) {
+      console.log("handleSubmit")
+      e.preventDefault();
+      var message = this.state.message.trim();
+      if (!message) {return;}
+      console.log(message)
+      this.setState({message: ''});
+    },
+    render: function(){
+      return (
+        <form className="chatForm" onSubmit={this.handleSubmit}>
+          <label>MESSAGE: </label>
+          <input
+            type="text"
+            placeholder="write a message"
+            value={this.state.message}
+            onChange={this.handleMessageChange}
+          />
+          <input className="btn btn-sm btn-primary" type="submit" method="post" />
+        </form>
+      )
+    }
+  })
+  var ChatViewHold = React.createClass({
+    componentWillMount: function(){
+      $.ajax({
+        url: '/messages/websockets',
+        dataType: 'json',
+      }).done(function(data){
+        this.setState({data: data});
+        // autoScroll();
+      }.bind(this))
+    },
+    getInitialState: function() {
+      return {data: []};
+    },
+    render: function(){
+      return (
+        <div>
+        <div id="msgs">Socket Status: hasnt been filled yet</div>
+        <h3>Hello <strong>{this.props.user}</strong>! Welcome to Websockets.</h3>
+        <ChatView data={this.state.data}/>
+        <ChatForm/>
+        </div>
+      )
+    }
+  })
+  ReactDOM.render(<ChatViewHold user={'<%= @user %>'} url={'/messages/websockets'}/>,document.getElementById('content'));
 </script>

@@ -1,7 +1,7 @@
 var FormView = React.createClass({
   handleUserSetSubmit: function(data) {
     console.log('handleCommentSubmit', data.url, data.user)
-    
+
     var re = /mr|ws|lr/;
     var chat = re.exec(data.url);
 
@@ -26,7 +26,7 @@ var FormView = React.createClass({
         <br/>
         <UserFormView chatName="Live Reload" url="/lr/user"onCommentSubmit={this.handleUserSetSubmit} />
         <br/>
-        <UserFormView chatName="Websockets" url="/ws"onCommentSubmit={this.handleUserSetSubmit} />    
+        <UserFormView chatName="Websockets" url="/ws"onCommentSubmit={this.handleUserSetSubmit} />
       </div>
     );
   }
@@ -46,7 +46,7 @@ var UserFormView = React.createClass({
     if (!user) {
       return;
     }
-      
+
     console.log(user, this.props.url)
     this.props.onCommentSubmit({user: user, url: this.props.url});
     this.setState({user: ''});
@@ -58,7 +58,7 @@ var UserFormView = React.createClass({
         <label> USER: </label>
           <input type="text" placeholder="Enter user name." value={this.state.user} onChange={this.handleChange} />
           <input className="btn btn-sm btn-primary" type="submit" onChange={this.handleSubmit}/>
-      </form> 
+      </form>
     );
   }
 });

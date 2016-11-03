@@ -18,7 +18,7 @@
   <a href='/'>Go Back to Home</a>
 <script>
 var userName = '<%= @user %>';
-$(document).ready(function(){
+// $(document).ready(function(){
 
   var re = /https|http/,
       protocol = re.exec(window.location.protocol),
@@ -39,7 +39,7 @@ $(document).ready(function(){
         $('#dump > ul > li:last-child').after(createLI(row, "green"));
       }
       console.log('on message run...')
-      autoScroll();
+      // autoScroll();
   };
 
   // Read CSV File first and Setup
@@ -78,7 +78,7 @@ $(document).ready(function(){
       dataType: 'json',
     }).done(function(data){
       createList(data);
-      autoScroll();
+      // autoScroll();
     })
   };
 
@@ -124,7 +124,7 @@ $(document).ready(function(){
     ws.send('ping,ping,ping,ping');
   }, 60000)
 
-});
+// });
 </script>
 
 <!-- ------------------------------------------ -->
@@ -161,18 +161,30 @@ $(document).ready(function(){
 
   var ChatForm = React.createClass({
     getInitialState: function() {
-      return {message: ''};
+      return {data:'', message: ''};
     },
     handleMessageChange: function(e) {
       this.setState({message: e.target.value});
     },
     handleSubmit: function(e) {
+      var messages = this.state.data;
       console.log("handleSubmit")
       e.preventDefault();
       var message = this.state.message.trim();
       if (!message) {return;}
       console.log(message)
+      var user = "<%= @user %>"
+      var data = {date: Date(), user: user, message: message, color: "<%= @user_color %>"}
+      // this.setState({data: this.state.data.concat([data])});
+
+      // var newMessages = messages.push(data);
+      // this.setState({data: newMessages});
+
+      this.props.onMessageSubmit(data)
+      console.log('STATUS=> triggering sockets...')
+      ws.send([data.date,data.user,data.message,data.color].join(','));
       this.setState({message: ''});
+      autoScroll();
     },
     render: function(){
       return (
@@ -196,11 +208,18 @@ $(document).ready(function(){
         dataType: 'json',
       }).done(function(data){
         this.setState({data: data});
-        // autoScroll();
+        data = data[data.length-1]
+        ws.send([data.date,data.user,data.message,data.color].join(','));
+        autoScroll();
       }.bind(this))
+
+
     },
     getInitialState: function() {
       return {data: []};
+    },
+    handleDataUpdate: function(d) {
+      this.setState({data: this.state.data.concat(d)});
     },
     render: function(){
       return (
@@ -208,7 +227,7 @@ $(document).ready(function(){
         <div id="msgs">Socket Status: hasnt been filled yet</div>
         <h3>Hello <strong>{this.props.user}</strong>! Welcome to Websockets.</h3>
         <ChatView data={this.state.data}/>
-        <ChatForm/>
+        <ChatForm onMessageSubmit={this.handleDataUpdate}/>
         </div>
       )
     }

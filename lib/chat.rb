@@ -19,9 +19,11 @@ module App
     def get_color
 
       color = '#%06x' % (rand * 0xffffff)
+      min_color_num = color.scan(/\d/).map(&:to_i).min
 
-      while (@colors.include?(color) || color.scan(/\d/).map(&:to_i).min < 5 ) do
+      while (@colors.include?(color) ||  min_color_num < 4 ) do
         color = '#%06x' % (rand * 0xffffff)
+        min_color_num = color.scan(/\d/).map(&:to_i).min
       end
 
       color

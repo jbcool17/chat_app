@@ -5,6 +5,7 @@ class CreateMessages < ActiveRecord::Migration[5.0]
       t.string :user
       t.text :message
       t.string :color
+      t.string :channel_name
     end
   end
 

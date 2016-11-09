@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161104220435) do
-
-  create_table "channels", force: :cascade do |t|
-    t.string "name"
-  end
+ActiveRecord::Schema.define(version: 20161022010745) do
 
   create_table "messages", force: :cascade do |t|
     t.datetime "date"
@@ -22,11 +18,6 @@ ActiveRecord::Schema.define(version: 20161104220435) do
     t.text     "message"
     t.string   "color"
     t.string   "channel_name"
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "color"
   end
 
 end

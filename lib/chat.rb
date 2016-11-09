@@ -8,8 +8,8 @@ module App
       @chat_user_list = {}
     end
 
-    def write_data(time, user, message, color='#D3D3D3', chat_type)
-      Message.create date: time, user: user, message: message, color: color, chat_type: chat_type
+    def write_data(time, user, message, color='#D3D3D3', channel_name)
+      Message.create date: time, user: user, message: message, color: color, channel_name: channel_name
     end
 
     def set_user_color(user)

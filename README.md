@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/jbcool17/chat_app.png?label=ready&title=Ready)](https://waffle.io/jbcool17/chat_app)
 # Chat App
 - Demonstrating different ways to make chat applications using ruby/javascript
 
